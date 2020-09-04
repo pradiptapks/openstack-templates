@@ -1,0 +1,5 @@
+parameter_defaults:
+    ControllerCount: 1
+    OvercloudControllerFlavor: control
+    ComputeSriovRTCount: 1
+    OvercloudComputeSriovRTFlavor: compute

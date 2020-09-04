@@ -1,0 +1,40 @@
+heat_template_version: rocky
+
+description: >
+  Example extra config for post-deployment
+
+# Note extra parameters can be defined, then passed data via the
+# environment parameter_defaults, without modifying the parent template
+parameters:
+  servers:
+    type: json
+  DeployIdentifier:
+    type: string
+  EndpointMap:
+    default: {}
+    type: json
+
+resources:
+
+  ExtraConfig:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      group: script
+      config: |
+        #!/bin/sh
+        dnf install -y http://download.devel.redhat.com/rcm-guest/puddles/OpenStack/rhos-release/rhos-release-latest.noarch.rpm;
+        rhos-release 16.1;
+        dnf -y module disable container-tools:rhel8 virt:rhel;
+        dnf -y module enable virt:8.2 container-tools:2.0;
+        curl --output /etc/yum.repos.d/rhos-release-nfv-rhel-8.2.repo https://gist.githubusercontent.com/pradiptapks/96e244d9650918d41b6aeb0fc67beeed/raw/20d72eb8c5f9576faa0603c37bee700f3eb9a10b/rhos-release-nfv-rhel-8.2.repo;
+        dnf install -y libvirt-client vim wget tmux git;
+
+  ExtraDeployments:
+    type: OS::Heat::SoftwareDeploymentGroup
+    properties:
+      name: ExtraDeployments
+      servers:  {get_param: servers}
+      config: {get_resource: ExtraConfig}
+      actions: ['CREATE','UPDATE']
+      input_values:
+        deploy_identifier: {get_param: DeployIdentifier}

@@ -1,0 +1,58 @@
+parameter_defaults:
+  NovaSchedulerDefaultFilters:
+    - "RetryFilter"
+    - "AvailabilityZoneFilter"
+    - "ComputeFilter"
+    - "ComputeCapabilitiesFilter"
+    - "ImagePropertiesFilter"
+    - "ServerGroupAntiAffinityFilter"
+    - "ServerGroupAffinityFilter"
+    - "PciPassthroughFilter"
+    - "NUMATopologyFilter"
+    - "AggregateInstanceExtraSpecsFilter"
+  NovaSchedulerAvailableFilters: ["nova.scheduler.filters.all_filters","nova.scheduler.filters.pci_passthrough_filter.PciPassthroughFilter"]
+  NeutronExternalNetworkBridge: "''"
+  NeutronEnableIsolatedMetadata: true
+  NeutronEnableForceMetadata: true
+  NeutronTunnelTypes: ''
+  NeutronOVSFirewallDriver: iptables_hybrid
+  NeutronFlatNetworks:
+    - management
+    - external
+  NeutronNetworkVLANRanges:
+    - offload1:178:178
+    - offload2:177:177
+  NeutronBridgeMappings:
+    - management:br-mgmt
+    - external:br-ex
+
+  #############################
+  # OVS Offload configuration #
+  #############################
+  ComputeSriovRTParameters:
+    KernelArgs: "default_hugepagesz=1GB hugepagesz=1G hugepages=70 iommu=pt intel_iommu=on isolcpus=12-35 mitigations=off nopti nospectre_v2 nospectre_v1 spec_store_bypass_disable=off"
+    TunedProfileName: "cpu-partitioning"
+    OvsHwOffload: True
+    IsolCpusList: "12-35"
+    NovaComputeCpuDedicatedSet: ['12-35']
+    NovaReservedHostMemory: 4096
+    NovaComputeCpuSharedSet: "0-11"
+    ImageDefault: overcloud-full
+    NovaLibvirtMemStatsPeriodSeconds: 0
+    NovaLibvirtCpuMode: host-passthrough
+    NovaLibvirtCpuModelExtraFlags: tsc-deadline
+    NovaLibvirtRxQueueSize: 1024
+    NovaLibvirtTxQueueSize: 1024
+    NeutronBridgeMappings:
+      - offload1:br-offload1
+      - offload2:br-offload2
+      - management:br-mgmt
+      - external:br-ex
+    NeutronPhysicalDevMappings: "offload1:ens3f0,offload2:ens3f1"
+    NovaPCIPassthrough:
+      - devname: "ens3f0"
+        trusted: "true"
+        physical_network: "offload1"
+      - devname: "ens3f1"
+        trusted: "true"
+        physical_network: "offload2"

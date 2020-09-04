@@ -1,0 +1,21 @@
+parameter_defaults:
+  ControlPlaneDefaultRoute: 192.168.24.1
+  ControlPlaneSubnetCidr: '24'
+  ControllerIPs:
+    ctlplane:
+    - 192.168.24.10
+  ComputeSriovRTIPs:
+    ctlplane:
+    - 192.168.24.20
+  DnsServers:
+  - 10.11.5.19
+  - 10.5.30.160
+  - 10.19.42.41
+  - 192.168.24.1
+  EC2MetadataIp: 192.168.24.1
+  NeutronGlobalPhysnetMtu: 9000
+  NodeRootPassword: "100yard-"
+resource_registry:
+  OS::TripleO::ComputeSriovRT::Net::SoftwareConfig: /home/stack/nfv_16_rt_offload/network/nics-config/osp16/computeovsoffload.yaml
+  OS::TripleO::Controller::Net::SoftwareConfig: /home/stack/nfv_16_rt_offload/network/nics-config/osp16/controller.yaml
+  OS::TripleO::NodeUserData: /usr/share/openstack-tripleo-heat-templates/firstboot/userdata_root_password.yaml
